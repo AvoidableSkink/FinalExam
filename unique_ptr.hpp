@@ -7,91 +7,76 @@
 
 namespace usu
 {
-	template <typename T>
-	class unique_ptr
-	{
-	public:
-		unique_ptr() {
-			data = nullptr;
-		}
-		
-		unique_ptr(T dta) {
-			data = new T(dta);
-		}
+    template <typename T>
+    class unique_ptr
+    {
+      public:
+        unique_ptr() { data = nullptr; }
 
-		unique_ptr(T* dta) {
-			data = dta;
-		}
+        unique_ptr(T dta) { data = new T(dta); }
 
-		unique_ptr(const unique_ptr& obj) = delete;
+        unique_ptr(T* dta) { data = dta; }
 
-		unique_ptr(unique_ptr&& obj) noexcept
-		{
-			//transfer ownership
-			data = obj.data;
-			obj.data = nullptr;
-		}
+        unique_ptr(const unique_ptr& obj) = delete;
 
-		//destructor
-		~unique_ptr()
-		{
-			delete data;
-		}
+        unique_ptr(unique_ptr&& obj) noexcept
+        {
+            // transfer ownership
+            data = obj.data;
+            obj.data = nullptr;
+        }
 
-		unique_ptr& operator=(const unique_ptr& rhs) = delete;
+        // destructor
+        ~unique_ptr() { delete data; }
 
-		unique_ptr& operator=(unique_ptr&& rhs) noexcept
-		{
-			if (this != &rhs)
-			{
-				std::swap(data, rhs.data);
-			}
-			return *this;
-		}
+        unique_ptr& operator=(const unique_ptr& rhs) = delete;
 
-		T* operator->()
-		{
-			return data;
-		}
+        unique_ptr& operator=(unique_ptr&& rhs) noexcept
+        {
+            if (this != &rhs)
+            {
+                std::swap(data, rhs.data);
+            }
+            return *this;
+        }
 
-		T operator*()
-		{
-			return *data;
-		}
+        T* operator->() { return data; }
 
-		bool operator==(const unique_ptr& rhs) {
-			if (rhs.data == data)
-				return true;
-			else
-				return false;
-		}
+        T operator*() { return *data; }
 
-		bool operator!=(const unique_ptr& rhs) {
-			if (rhs.data == data)
-				return false;
-			else
-				return true;
-		}
+        bool operator==(const unique_ptr& rhs)
+        {
+            if (rhs.data == data)
+                return true;
+            else
+                return false;
+        }
 
-		T* get() const
-		{
-			return data;
-		}
+        bool operator!=(const unique_ptr& rhs)
+        {
+            if (rhs.data == data)
+                return false;
+            else
+                return true;
+        }
 
-		T* release() {
-			T* tmp = data;
-			data = nullptr;
-			return tmp;
-		}
+        T* get() const { return data; }
 
-	private:
-		T* data;
-	};
+        T* release()
+        {
+            T* tmp = data;
+            data = nullptr;
+            return tmp;
+        }
 
-	template <typename T, typename... Args>
-	unique_ptr<T> make_unique(Args&& ... args)
-	{
-		return unique_ptr<T>(new T(std::forward<Args>(args)...));
-	}
+      private:
+        T* data;
+    };
+
+    template <typename T, typename... Args>
+    unique_ptr<T> make_unique(Args&&... args)
+    {
+        return unique_ptr<T>(new T(std::forward<Args>(args)...));
+    }
 
 } // namespace usu
